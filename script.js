@@ -272,8 +272,11 @@ render();
 
 // يحدّث أسعار الصرف تلقائياً من الدولار (يبقى على الأرقام الثابتة فوق لو ما فيه نت أو تعذّر الطلب)
 const RATE_KEY = "madaweb-rates-v1", RATE_TTL = 12*60*60*1000; // كل 12 ساعة
+function validRates(r){
+  return r && ["TRY","SAR","OMR"].every(k=>Number.isFinite(r[k]) && r[k]>0);
+}
 function applyRates(r){ // r: كم وحدة من كل عملة = 1 دولار
-  if (!(r.TRY > 0)) return;
+  if (!validRates(r)) return;
   CUR.SAR.rate = r.SAR / r.TRY;
   CUR.USD.rate = 1 / r.TRY;
   CUR.OMR.rate = r.OMR / r.TRY;
@@ -283,11 +286,16 @@ function applyRates(r){ // r: كم وحدة من كل عملة = 1 دولار
   try {
     let cached = null;
     try { cached = JSON.parse(localStorage.getItem(RATE_KEY) || "null"); } catch(e) {}
-    if (cached && Date.now() - cached.t < RATE_TTL) { applyRates(cached.r); return; }
+    if (cached && validRates(cached.r)) {
+      applyRates(cached.r);
+      if (Date.now() - cached.t < RATE_TTL) return;
+    }
     const res = await fetch("https://open.er-api.com/v6/latest/USD");
+    if (!res.ok) return;
     const data = await res.json();
-    if (data && data.result === "success" && data.rates && data.rates.TRY && data.rates.SAR && data.rates.OMR) {
+    if (data && data.result === "success" && data.rates) {
       const r = { TRY:data.rates.TRY, SAR:data.rates.SAR, OMR:data.rates.OMR };
+      if (!validRates(r)) return;
       try { localStorage.setItem(RATE_KEY, JSON.stringify({t:Date.now(), r})); } catch(e) {}
       applyRates(r);
     }
