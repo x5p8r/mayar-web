@@ -51,7 +51,7 @@ h2{font-size:15px;margin:0 6px 12px;font-weight:600}
 .cur button[aria-pressed="true"]{background:var(--ink);color:#fff}
 .cur button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .note{color:var(--mute);font-size:13px;margin:18px 8px 0;font-weight:300}
-.bar{position:fixed;inset-inline:0;bottom:0;padding:0 12px calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none}
+.bar{position:fixed;inset-inline:0;bottom:0;padding:0 12px calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none;z-index:5}
 .cap{pointer-events:auto;max-width:520px;margin:0 auto;background:var(--sheet);border-radius:26px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 10px 40px rgba(60,45,20,.16)}
 .lbl{font-size:12.5px;color:var(--mute);font-weight:300}
 .total{font-size:clamp(28px,8vw,36px);font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
